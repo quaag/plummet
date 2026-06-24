@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "plummet",
+  "version": "${version}",
+  "name": "Plummet",
+  "description": "A mace PvP training mod for Minecraft. Practice bots, drills, and scenarios you can load in singleplayer.",
+  "authors": ["quaag"],
+  "contact": {
+    "homepage": "https://github.com/quaag/Plummet",
+    "sources": "https://github.com/quaag/Plummet"
+  },
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["dev.quaag.plummet.Plummet"]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
