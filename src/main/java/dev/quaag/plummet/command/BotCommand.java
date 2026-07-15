@@ -27,7 +27,7 @@ public final class BotCommand {
 
     private static int spawnBot(ServerCommandSource source) {
         source.getServer().getCommandManager()
-            .executeWithPrefix(source, "summon minecraft:zombie ~ ~ ~2");
+            .parseAndExecute(source, "summon minecraft:zombie ~ ~ ~2");
 
         source.sendFeedback(
             () -> Text.literal("[Plummet] Spawned a practice dummy."),
