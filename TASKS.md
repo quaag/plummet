@@ -12,8 +12,6 @@ Keep the module architecture: command, bot, behavior, gamemode, scenario, stats 
 
 ## Tasks
 
-- [ ] Bot manager: a PracticeBot class in the bot package that spawns one tracked dummy (zombie with a custom name, no despawn, no daylight burning, no drops) and a /plummet bot remove subcommand that despawns it. Replace the raw summon in BotCommand.
-      commit: bot spawn and remove
 - [ ] Bot options: optional health argument on /plummet bot spawn that sets the dummy max health attribute, clamped 1 to 100.
       commit: bot options
 - [ ] Hit feedback: when a player damages the dummy, show damage dealt and the attacker fall distance at the moment of the hit in the action bar.
@@ -29,5 +27,7 @@ Keep the module architecture: command, bot, behavior, gamemode, scenario, stats 
 
 ## Done
 
+- [x] Bot manager: a PracticeBot class in the bot package that spawns one tracked dummy (zombie with a custom name, no despawn, no daylight burning, no drops) and a /plummet bot remove subcommand that despawns it. Replace the raw summon in BotCommand.
+      commit: bot spawn and remove
 - [x] Build setup: if java 21 is missing run brew install --cask temurin@21. Run ./gradlew build and fix any compile errors until green, checking calls against 1.21.11 yarn mappings.
       commit: fix build
