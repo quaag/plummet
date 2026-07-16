@@ -1,6 +1,7 @@
 package dev.quaag.plummet.command;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.quaag.plummet.bot.PracticeBot;
 import net.minecraft.entity.mob.ZombieEntity;
@@ -9,6 +10,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
+import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public final class BotCommand {
@@ -27,13 +29,18 @@ public final class BotCommand {
                 })
                 .then(literal("bot")
                     .then(literal("spawn")
-                        .executes(ctx -> spawnBot(ctx.getSource())))
+                        .executes(ctx -> spawnBot(ctx.getSource(), PracticeBot.DEFAULT_HEALTH))
+                        .then(argument("health", IntegerArgumentType.integer(
+                                PracticeBot.MIN_HEALTH, PracticeBot.MAX_HEALTH))
+                            .executes(ctx -> spawnBot(
+                                ctx.getSource(),
+                                IntegerArgumentType.getInteger(ctx, "health")))))
                     .then(literal("remove")
                         .executes(ctx -> removeBot(ctx.getSource()))))
         );
     }
 
-    private static int spawnBot(ServerCommandSource source) throws CommandSyntaxException {
+    private static int spawnBot(ServerCommandSource source, int health) throws CommandSyntaxException {
         ServerPlayerEntity player = source.getPlayerOrThrow();
         float yaw = player.getYaw();
         double radians = Math.toRadians(yaw);
@@ -42,14 +49,15 @@ public final class BotCommand {
             0.0,
             Math.cos(radians) * SPAWN_DISTANCE);
 
-        ZombieEntity bot = PracticeBot.spawn(source.getWorld(), pos, yaw + 180.0f);
+        ZombieEntity bot = PracticeBot.spawn(source.getWorld(), pos, yaw + 180.0f, health);
         if (bot == null) {
             source.sendError(Text.literal("[Plummet] Could not spawn a practice dummy."));
             return 0;
         }
 
+        float spawned = bot.getMaxHealth();
         source.sendFeedback(
-            () -> Text.literal("[Plummet] Spawned a practice dummy."),
+            () -> Text.literal("[Plummet] Spawned a practice dummy with " + (int) spawned + " health."),
             false);
         return 1;
     }
