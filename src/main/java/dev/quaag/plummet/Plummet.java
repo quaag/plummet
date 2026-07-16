@@ -1,5 +1,6 @@
 package dev.quaag.plummet;
 
+import dev.quaag.plummet.bot.PracticeBot;
 import dev.quaag.plummet.command.BotCommand;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -13,6 +14,8 @@ public class Plummet implements ModInitializer {
     @Override
     public void onInitialize() {
         LOGGER.info("Plummet initializing");
+
+        PracticeBot.register();
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 BotCommand.register(dispatcher));
