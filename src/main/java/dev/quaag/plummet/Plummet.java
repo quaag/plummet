@@ -1,5 +1,6 @@
 package dev.quaag.plummet;
 
+import dev.quaag.plummet.behavior.HitFeedback;
 import dev.quaag.plummet.bot.PracticeBot;
 import dev.quaag.plummet.command.BotCommand;
 import net.fabricmc.api.ModInitializer;
@@ -16,6 +17,7 @@ public class Plummet implements ModInitializer {
         LOGGER.info("Plummet initializing");
 
         PracticeBot.register();
+        HitFeedback.register();
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 BotCommand.register(dispatcher));
