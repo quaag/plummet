@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.quaag.plummet.bot.PracticeBot;
+import dev.quaag.plummet.scenario.Arena;
 import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -37,7 +38,19 @@ public final class BotCommand {
                                 IntegerArgumentType.getInteger(ctx, "health")))))
                     .then(literal("remove")
                         .executes(ctx -> removeBot(ctx.getSource()))))
+                .then(literal("arena")
+                    .executes(ctx -> buildArena(ctx.getSource())))
         );
+    }
+
+    private static int buildArena(ServerCommandSource source) throws CommandSyntaxException {
+        ServerPlayerEntity player = source.getPlayerOrThrow();
+        int placed = Arena.build(source.getWorld(), player);
+        source.sendFeedback(
+            () -> Text.literal("[Plummet] Built a " + Arena.SIZE + " by " + Arena.SIZE
+                + " arena, placed " + placed + " blocks."),
+            false);
+        return 1;
     }
 
     private static int spawnBot(ServerCommandSource source, int health) throws CommandSyntaxException {
