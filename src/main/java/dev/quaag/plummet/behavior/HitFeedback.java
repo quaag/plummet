@@ -1,6 +1,7 @@
 package dev.quaag.plummet.behavior;
 
 import dev.quaag.plummet.bot.PracticeBot;
+import dev.quaag.plummet.stats.SessionStats;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -22,6 +23,7 @@ public final class HitFeedback {
                 return;
             }
 
+            SessionStats.recordHit(player, player.fallDistance);
             player.sendMessage(format(damageTaken, player.fallDistance), true);
         });
     }

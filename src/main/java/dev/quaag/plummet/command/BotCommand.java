@@ -41,6 +41,7 @@ public final class BotCommand {
                 .then(literal("arena")
                     .executes(ctx -> buildArena(ctx.getSource())))
                 .then(DrillCommand.build())
+                .then(StatsCommand.build())
         );
     }
 
