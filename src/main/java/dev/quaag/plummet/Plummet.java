@@ -3,6 +3,7 @@ package dev.quaag.plummet;
 import dev.quaag.plummet.behavior.HitFeedback;
 import dev.quaag.plummet.bot.PracticeBot;
 import dev.quaag.plummet.command.BotCommand;
+import dev.quaag.plummet.gamemode.HeightDrill;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ public class Plummet implements ModInitializer {
 
         PracticeBot.register();
         HitFeedback.register();
+        HeightDrill.register();
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 BotCommand.register(dispatcher));

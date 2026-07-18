@@ -40,6 +40,7 @@ public final class BotCommand {
                         .executes(ctx -> removeBot(ctx.getSource()))))
                 .then(literal("arena")
                     .executes(ctx -> buildArena(ctx.getSource())))
+                .then(DrillCommand.build())
         );
     }
 
