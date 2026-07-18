@@ -12,13 +12,13 @@ Keep the module architecture: command, bot, behavior, gamemode, scenario, stats 
 
 ## Tasks
 
-- [ ] Session stats: a stats module counting hits on the dummy and the max recorded fall distance hit, shown by /plummet stats.
-      commit: session stats
 - [ ] Update the README to reflect the shipped commands and current status.
       commit: update readme
 
 ## Done
 
+- [x] Session stats: a stats module counting hits on the dummy and the max recorded fall distance hit, shown by /plummet stats.
+      commit: session stats
 - [x] Height drill: /plummet drill height starts a drill that tracks the highest Y gained after each wind charge use and reports the number on landing.
       commit: height drill
 - [x] Practice arena: /plummet arena builds a flat 24 by 24 smooth stone platform centered on the player at their current Y minus 1, only replacing air.
