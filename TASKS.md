@@ -12,11 +12,10 @@ Keep the module architecture: command, bot, behavior, gamemode, scenario, stats 
 
 ## Tasks
 
-- [ ] Update the README to reflect the shipped commands and current status.
-      commit: update readme
-
 ## Done
 
+- [x] Update the README to reflect the shipped commands and current status.
+      commit: update readme
 - [x] Session stats: a stats module counting hits on the dummy and the max recorded fall distance hit, shown by /plummet stats.
       commit: session stats
 - [x] Height drill: /plummet drill height starts a drill that tracks the highest Y gained after each wind charge use and reports the number on landing.
