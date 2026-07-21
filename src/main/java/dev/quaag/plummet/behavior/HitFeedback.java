@@ -24,15 +24,17 @@ public final class HitFeedback {
             }
 
             double fallDistance = AttackTracker.fallDistance(player);
-            SessionStats.recordHit(player, fallDistance);
-            player.sendMessage(format(damageTaken, fallDistance), true);
+            boolean mace = AttackTracker.usedMace(player);
+            SessionStats.recordHit(player, fallDistance, damageTaken, mace);
+            player.sendMessage(format(damageTaken, fallDistance, mace), true);
         });
     }
 
-    private static Text format(float damage, double fallDistance) {
+    private static Text format(float damage, double fallDistance, boolean mace) {
         return Text.literal(String.format(
             Locale.ROOT,
-            "%.1f damage from %.1f blocks",
+            "%s %.1f damage from %.1f blocks",
+            mace ? "MACE" : "hit",
             damage,
             fallDistance));
     }
