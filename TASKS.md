@@ -10,7 +10,26 @@ Fabric 1.21.11, yarn mappings, Java 21. If a JDK 21 is installed, ./gradlew buil
 
 Keep the module architecture: command, bot, behavior, gamemode, scenario, stats packages under dev.quaag.plummet. Small focused changes, match the existing code style, no new dependencies beyond Fabric API.
 
+The mod is a MACE training tool. Prefer work that makes it measurably better at that specific job over generic features.
+
 ## Tasks
+
+- [ ] Fix fall distance capture: vanilla zeroes fallDistance during a mace attack, so reading player.fallDistance in the AFTER_DAMAGE handler can report 0. Capture the attacker fall distance in an AttackEntityCallback (which fires before damage) into a short lived per player value, and have HitFeedback and SessionStats read that captured value instead. Keep the action bar output format.
+      commit: fix fall distance capture
+- [ ] Mace awareness: detect whether the hit was made with a mace, label mace hits distinctly in the action bar feedback, and track best mace hit damage separately from other hits in SessionStats.
+      commit: mace aware hit tracking
+- [ ] Dummy behavior modes: /plummet bot mode with static and strafe options. Static clears the zombie AI goals so it stands still as a pure target, strafe keeps simple side to side movement. Default new dummies to static.
+      commit: bot behavior modes
+- [ ] Combo drill: /plummet drill combo tracks a full wind charge launch into mace hit sequence and reports height gained, airtime in ticks, and damage dealt on the landing hit.
+      commit: combo drill
+- [ ] Drill difficulty: /plummet drill height with easy, normal, and hard options that set a target height threshold and report pass or fail against it on each landing.
+      commit: drill difficulty
+- [ ] Persist session stats across a restart by writing them into the world save directory on server stop and loading them on server start.
+      commit: persist session stats
+- [ ] Add a test source set with plain JUnit tests for the pure logic that does not need a running game: health clamping, stats accumulation and reset, and drill state transitions. Wire the test task into the build.
+      commit: add unit tests
+- [ ] Bump mod_version to 0.2.0 in gradle.properties and update the README status and command table to match everything shipped.
+      commit: bump to 0.2.0
 
 ## Done
 
