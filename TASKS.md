@@ -14,8 +14,6 @@ The mod is a MACE training tool. Prefer work that makes it measurably better at 
 
 ## Tasks
 
-- [ ] Mace awareness: detect whether the hit was made with a mace, label mace hits distinctly in the action bar feedback, and track best mace hit damage separately from other hits in SessionStats.
-      commit: mace aware hit tracking
 - [ ] Dummy behavior modes: /plummet bot mode with static and strafe options. Static clears the zombie AI goals so it stands still as a pure target, strafe keeps simple side to side movement. Default new dummies to static.
       commit: bot behavior modes
 - [ ] Combo drill: /plummet drill combo tracks a full wind charge launch into mace hit sequence and reports height gained, airtime in ticks, and damage dealt on the landing hit.
@@ -31,6 +29,8 @@ The mod is a MACE training tool. Prefer work that makes it measurably better at 
 
 ## Done
 
+- [x] Mace awareness: detect whether the hit was made with a mace, label mace hits distinctly in the action bar feedback, and track best mace hit damage separately from other hits in SessionStats.
+      commit: mace aware hit tracking
 - [x] Fix fall distance capture: vanilla zeroes fallDistance during a mace attack, so reading player.fallDistance in the AFTER_DAMAGE handler can report 0. Capture the attacker fall distance in an AttackEntityCallback (which fires before damage) into a short lived per player value, and have HitFeedback and SessionStats read that captured value instead. Keep the action bar output format.
       commit: fix fall distance capture
 - [x] Update the README to reflect the shipped commands and current status.
