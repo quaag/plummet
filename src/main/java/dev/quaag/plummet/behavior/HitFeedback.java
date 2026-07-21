@@ -23,8 +23,9 @@ public final class HitFeedback {
                 return;
             }
 
-            SessionStats.recordHit(player, player.fallDistance);
-            player.sendMessage(format(damageTaken, player.fallDistance), true);
+            double fallDistance = AttackTracker.fallDistance(player);
+            SessionStats.recordHit(player, fallDistance);
+            player.sendMessage(format(damageTaken, fallDistance), true);
         });
     }
 

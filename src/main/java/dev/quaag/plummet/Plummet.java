@@ -1,5 +1,6 @@
 package dev.quaag.plummet;
 
+import dev.quaag.plummet.behavior.AttackTracker;
 import dev.quaag.plummet.behavior.HitFeedback;
 import dev.quaag.plummet.bot.PracticeBot;
 import dev.quaag.plummet.command.BotCommand;
@@ -18,6 +19,7 @@ public class Plummet implements ModInitializer {
         LOGGER.info("Plummet initializing");
 
         PracticeBot.register();
+        AttackTracker.register();
         HitFeedback.register();
         HeightDrill.register();
 
