@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public final class HeightDrill {
-    private static final Map<UUID, State> ACTIVE = new HashMap<>();
+    private static final Map<UUID, HeightDrillState> ACTIVE = new HashMap<>();
 
     private HeightDrill() {}
 
@@ -28,7 +28,7 @@ public final class HeightDrill {
                 return ActionResult.PASS;
             }
 
-            State state = ACTIVE.get(serverPlayer.getUuid());
+            HeightDrillState state = ACTIVE.get(serverPlayer.getUuid());
             if (state != null) {
                 state.launch(serverPlayer.getY());
             }
@@ -39,7 +39,7 @@ public final class HeightDrill {
     }
 
     public static void start(ServerPlayerEntity player, DrillDifficulty difficulty) {
-        ACTIVE.put(player.getUuid(), new State(difficulty));
+        ACTIVE.put(player.getUuid(), new HeightDrillState(difficulty.target()));
     }
 
     public static boolean stop(ServerPlayerEntity player) {
@@ -55,75 +55,32 @@ public final class HeightDrill {
             return;
         }
 
-        Iterator<Map.Entry<UUID, State>> entries = ACTIVE.entrySet().iterator();
+        Iterator<Map.Entry<UUID, HeightDrillState>> entries = ACTIVE.entrySet().iterator();
         while (entries.hasNext()) {
-            Map.Entry<UUID, State> entry = entries.next();
+            Map.Entry<UUID, HeightDrillState> entry = entries.next();
             ServerPlayerEntity player = server.getPlayerManager().getPlayer(entry.getKey());
             if (player == null) {
                 entries.remove();
                 continue;
             }
-            entry.getValue().tick(player);
+
+            HeightDrillState state = entry.getValue();
+            HeightDrillState.Landing landing = state.tick(player.getY(), player.isOnGround());
+            if (landing != null) {
+                player.sendMessage(format(state.target(), landing), true);
+            }
         }
     }
 
-    private static final class State {
-        private final DrillDifficulty difficulty;
-        private boolean launched;
-        private double baseY;
-        private double peakY;
-        private double best;
-        private int attempts;
-        private int passes;
-
-        private State(DrillDifficulty difficulty) {
-            this.difficulty = difficulty;
-        }
-
-        private void launch(double y) {
-            launched = true;
-            baseY = y;
-            peakY = y;
-        }
-
-        private void tick(ServerPlayerEntity player) {
-            if (!launched) {
-                return;
-            }
-
-            double y = player.getY();
-            if (y > peakY) {
-                peakY = y;
-            }
-
-            if (!player.isOnGround()) {
-                return;
-            }
-
-            launched = false;
-            double gained = peakY - baseY;
-            if (gained > best) {
-                best = gained;
-            }
-
-            attempts++;
-            boolean passed = gained >= difficulty.target();
-            if (passed) {
-                passes++;
-            }
-            player.sendMessage(format(gained, passed), true);
-        }
-
-        private Text format(double gained, boolean passed) {
-            return Text.literal(String.format(
-                Locale.ROOT,
-                "%s %.1f of %.1f blocks, best %.1f, %d of %d passed",
-                passed ? "PASS" : "FAIL",
-                gained,
-                difficulty.target(),
-                best,
-                passes,
-                attempts));
-        }
+    private static Text format(double target, HeightDrillState.Landing landing) {
+        return Text.literal(String.format(
+            Locale.ROOT,
+            "%s %.1f of %.1f blocks, best %.1f, %d of %d passed",
+            landing.passed ? "PASS" : "FAIL",
+            landing.gained,
+            target,
+            landing.best,
+            landing.passes,
+            landing.attempts));
     }
 }

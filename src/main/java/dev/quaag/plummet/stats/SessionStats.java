@@ -4,8 +4,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public final class SessionStats {
@@ -17,67 +15,54 @@ public final class SessionStats {
     private static final String BEST_MACE_KEY = "bestMaceDamage";
     private static final String BEST_OTHER_KEY = "bestOtherDamage";
 
-    private static final Map<UUID, Entry> ENTRIES = new HashMap<>();
+    private static final StatBook BOOK = new StatBook();
 
     private SessionStats() {}
 
     public static void recordHit(ServerPlayerEntity player, double fallDistance, float damage, boolean mace) {
-        Entry entry = ENTRIES.computeIfAbsent(player.getUuid(), key -> new Entry());
-        entry.hits++;
-        if (fallDistance > entry.bestFallDistance) {
-            entry.bestFallDistance = fallDistance;
-        }
-
-        if (mace) {
-            entry.maceHits++;
-            if (damage > entry.bestMaceDamage) {
-                entry.bestMaceDamage = damage;
-            }
-        } else if (damage > entry.bestOtherDamage) {
-            entry.bestOtherDamage = damage;
-        }
+        BOOK.record(player.getUuid(), fallDistance, damage, mace);
     }
 
     public static int hits(ServerPlayerEntity player) {
-        Entry entry = ENTRIES.get(player.getUuid());
-        return entry == null ? 0 : entry.hits;
+        StatEntry entry = BOOK.get(player.getUuid());
+        return entry == null ? 0 : entry.hits();
     }
 
     public static int maceHits(ServerPlayerEntity player) {
-        Entry entry = ENTRIES.get(player.getUuid());
-        return entry == null ? 0 : entry.maceHits;
+        StatEntry entry = BOOK.get(player.getUuid());
+        return entry == null ? 0 : entry.maceHits();
     }
 
     public static double bestFallDistance(ServerPlayerEntity player) {
-        Entry entry = ENTRIES.get(player.getUuid());
-        return entry == null ? 0.0 : entry.bestFallDistance;
+        StatEntry entry = BOOK.get(player.getUuid());
+        return entry == null ? 0.0 : entry.bestFallDistance();
     }
 
     public static float bestMaceDamage(ServerPlayerEntity player) {
-        Entry entry = ENTRIES.get(player.getUuid());
-        return entry == null ? 0.0F : entry.bestMaceDamage;
+        StatEntry entry = BOOK.get(player.getUuid());
+        return entry == null ? 0.0F : entry.bestMaceDamage();
     }
 
     public static float bestOtherDamage(ServerPlayerEntity player) {
-        Entry entry = ENTRIES.get(player.getUuid());
-        return entry == null ? 0.0F : entry.bestOtherDamage;
+        StatEntry entry = BOOK.get(player.getUuid());
+        return entry == null ? 0.0F : entry.bestOtherDamage();
     }
 
     public static boolean reset(ServerPlayerEntity player) {
-        return ENTRIES.remove(player.getUuid()) != null;
+        return BOOK.reset(player.getUuid());
     }
 
     public static NbtCompound writeNbt() {
         NbtList list = new NbtList();
-        for (Map.Entry<UUID, Entry> stored : ENTRIES.entrySet()) {
-            Entry entry = stored.getValue();
+        for (UUID id : BOOK.ids()) {
+            StatEntry entry = BOOK.get(id);
             NbtCompound nbt = new NbtCompound();
-            nbt.putString(UUID_KEY, stored.getKey().toString());
-            nbt.putInt(HITS_KEY, entry.hits);
-            nbt.putInt(MACE_HITS_KEY, entry.maceHits);
-            nbt.putDouble(BEST_FALL_KEY, entry.bestFallDistance);
-            nbt.putFloat(BEST_MACE_KEY, entry.bestMaceDamage);
-            nbt.putFloat(BEST_OTHER_KEY, entry.bestOtherDamage);
+            nbt.putString(UUID_KEY, id.toString());
+            nbt.putInt(HITS_KEY, entry.hits());
+            nbt.putInt(MACE_HITS_KEY, entry.maceHits());
+            nbt.putDouble(BEST_FALL_KEY, entry.bestFallDistance());
+            nbt.putFloat(BEST_MACE_KEY, entry.bestMaceDamage());
+            nbt.putFloat(BEST_OTHER_KEY, entry.bestOtherDamage());
             list.add(nbt);
         }
 
@@ -87,7 +72,7 @@ public final class SessionStats {
     }
 
     public static int readNbt(NbtCompound root) {
-        ENTRIES.clear();
+        BOOK.clear();
 
         NbtList list = root.getListOrEmpty(ENTRIES_KEY);
         for (int i = 0; i < list.size(); i++) {
@@ -97,16 +82,15 @@ public final class SessionStats {
                 continue;
             }
 
-            Entry entry = new Entry();
-            entry.hits = nbt.getInt(HITS_KEY, 0);
-            entry.maceHits = nbt.getInt(MACE_HITS_KEY, 0);
-            entry.bestFallDistance = nbt.getDouble(BEST_FALL_KEY, 0.0);
-            entry.bestMaceDamage = nbt.getFloat(BEST_MACE_KEY, 0.0F);
-            entry.bestOtherDamage = nbt.getFloat(BEST_OTHER_KEY, 0.0F);
-            ENTRIES.put(uuid, entry);
+            BOOK.getOrCreate(uuid).set(
+                nbt.getInt(HITS_KEY, 0),
+                nbt.getInt(MACE_HITS_KEY, 0),
+                nbt.getDouble(BEST_FALL_KEY, 0.0),
+                nbt.getFloat(BEST_MACE_KEY, 0.0F),
+                nbt.getFloat(BEST_OTHER_KEY, 0.0F));
         }
 
-        return ENTRIES.size();
+        return BOOK.size();
     }
 
     private static UUID parseUuid(String value) {
@@ -115,13 +99,5 @@ public final class SessionStats {
         } catch (IllegalArgumentException invalid) {
             return null;
         }
-    }
-
-    private static final class Entry {
-        private int hits;
-        private int maceHits;
-        private double bestFallDistance;
-        private float bestMaceDamage;
-        private float bestOtherDamage;
     }
 }

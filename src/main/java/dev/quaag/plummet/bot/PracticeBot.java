@@ -15,14 +15,13 @@ import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Unit;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 public final class PracticeBot {
     public static final String BOT_NAME = "Plummet Dummy";
-    public static final int MIN_HEALTH = 1;
-    public static final int MAX_HEALTH = 100;
-    public static final int DEFAULT_HEALTH = 20;
+    public static final int MIN_HEALTH = HealthRange.MIN;
+    public static final int MAX_HEALTH = HealthRange.MAX;
+    public static final int DEFAULT_HEALTH = HealthRange.DEFAULT;
     public static final BotMode DEFAULT_MODE = BotMode.STATIC;
 
     private static final double STRAFE_SPEED = 0.16;
@@ -60,7 +59,7 @@ public final class PracticeBot {
             return null;
         }
 
-        int clamped = MathHelper.clamp(health, MIN_HEALTH, MAX_HEALTH);
+        int clamped = HealthRange.clamp(health);
         EntityAttributeInstance maxHealth = bot.getAttributeInstance(EntityAttributes.MAX_HEALTH);
         if (maxHealth != null) {
             maxHealth.setBaseValue(clamped);
