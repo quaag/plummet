@@ -14,8 +14,6 @@ The mod is a MACE training tool. Prefer work that makes it measurably better at 
 
 ## Tasks
 
-- [ ] Combo drill: /plummet drill combo tracks a full wind charge launch into mace hit sequence and reports height gained, airtime in ticks, and damage dealt on the landing hit.
-      commit: combo drill
 - [ ] Drill difficulty: /plummet drill height with easy, normal, and hard options that set a target height threshold and report pass or fail against it on each landing.
       commit: drill difficulty
 - [ ] Persist session stats across a restart by writing them into the world save directory on server stop and loading them on server start.
@@ -27,6 +25,8 @@ The mod is a MACE training tool. Prefer work that makes it measurably better at 
 
 ## Done
 
+- [x] Combo drill: /plummet drill combo tracks a full wind charge launch into mace hit sequence and reports height gained, airtime in ticks, and damage dealt on the landing hit.
+      commit: combo drill
 - [x] Dummy behavior modes: /plummet bot mode with static and strafe options. Static clears the zombie AI goals so it stands still as a pure target, strafe keeps simple side to side movement. Default new dummies to static.
       commit: bot behavior modes
 - [x] Mace awareness: detect whether the hit was made with a mace, label mace hits distinctly in the action bar feedback, and track best mace hit damage separately from other hits in SessionStats.
