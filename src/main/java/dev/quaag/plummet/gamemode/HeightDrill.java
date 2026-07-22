@@ -38,8 +38,8 @@ public final class HeightDrill {
         ServerTickEvents.END_SERVER_TICK.register(HeightDrill::tick);
     }
 
-    public static void start(ServerPlayerEntity player) {
-        ACTIVE.put(player.getUuid(), new State());
+    public static void start(ServerPlayerEntity player, DrillDifficulty difficulty) {
+        ACTIVE.put(player.getUuid(), new State(difficulty));
     }
 
     public static boolean stop(ServerPlayerEntity player) {
@@ -68,10 +68,17 @@ public final class HeightDrill {
     }
 
     private static final class State {
+        private final DrillDifficulty difficulty;
         private boolean launched;
         private double baseY;
         private double peakY;
         private double best;
+        private int attempts;
+        private int passes;
+
+        private State(DrillDifficulty difficulty) {
+            this.difficulty = difficulty;
+        }
 
         private void launch(double y) {
             launched = true;
@@ -98,15 +105,25 @@ public final class HeightDrill {
             if (gained > best) {
                 best = gained;
             }
-            player.sendMessage(format(gained, best), true);
+
+            attempts++;
+            boolean passed = gained >= difficulty.target();
+            if (passed) {
+                passes++;
+            }
+            player.sendMessage(format(gained, passed), true);
         }
 
-        private Text format(double gained, double bestGained) {
+        private Text format(double gained, boolean passed) {
             return Text.literal(String.format(
                 Locale.ROOT,
-                "%.1f blocks gained, best %.1f",
+                "%s %.1f of %.1f blocks, best %.1f, %d of %d passed",
+                passed ? "PASS" : "FAIL",
                 gained,
-                bestGained));
+                difficulty.target(),
+                best,
+                passes,
+                attempts));
         }
     }
 }

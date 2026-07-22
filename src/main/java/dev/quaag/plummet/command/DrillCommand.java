@@ -3,10 +3,13 @@ package dev.quaag.plummet.command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.quaag.plummet.gamemode.ComboDrill;
+import dev.quaag.plummet.gamemode.DrillDifficulty;
 import dev.quaag.plummet.gamemode.HeightDrill;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+
+import java.util.Locale;
 
 import static net.minecraft.server.command.CommandManager.literal;
 
@@ -16,19 +19,30 @@ public final class DrillCommand {
     public static LiteralArgumentBuilder<ServerCommandSource> build() {
         return literal("drill")
             .then(literal("height")
-                .executes(ctx -> startHeight(ctx.getSource())))
+                .executes(ctx -> startHeight(ctx.getSource(), DrillDifficulty.NORMAL))
+                .then(literal("easy")
+                    .executes(ctx -> startHeight(ctx.getSource(), DrillDifficulty.EASY)))
+                .then(literal("normal")
+                    .executes(ctx -> startHeight(ctx.getSource(), DrillDifficulty.NORMAL)))
+                .then(literal("hard")
+                    .executes(ctx -> startHeight(ctx.getSource(), DrillDifficulty.HARD))))
             .then(literal("combo")
                 .executes(ctx -> startCombo(ctx.getSource())))
             .then(literal("stop")
                 .executes(ctx -> stopDrill(ctx.getSource())));
     }
 
-    private static int startHeight(ServerCommandSource source) throws CommandSyntaxException {
+    private static int startHeight(ServerCommandSource source, DrillDifficulty difficulty)
+            throws CommandSyntaxException {
         ServerPlayerEntity player = source.getPlayerOrThrow();
         ComboDrill.stop(player);
-        HeightDrill.start(player);
+        HeightDrill.start(player, difficulty);
         source.sendFeedback(
-            () -> Text.literal("[Plummet] Height drill started. Use a wind charge and land to see your gain."),
+            () -> Text.literal(String.format(
+                Locale.ROOT,
+                "[Plummet] Height drill started on %s, target %.1f blocks.",
+                difficulty.id(),
+                difficulty.target())),
             false);
         return 1;
     }
