@@ -1,6 +1,7 @@
 package dev.quaag.plummet.behavior;
 
 import dev.quaag.plummet.bot.PracticeBot;
+import dev.quaag.plummet.gamemode.ComboDrill;
 import dev.quaag.plummet.stats.SessionStats;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.Entity;
@@ -26,6 +27,7 @@ public final class HitFeedback {
             double fallDistance = AttackTracker.fallDistance(player);
             boolean mace = AttackTracker.usedMace(player);
             SessionStats.recordHit(player, fallDistance, damageTaken, mace);
+            ComboDrill.recordHit(player, damageTaken, mace);
             player.sendMessage(format(damageTaken, fallDistance, mace), true);
         });
     }
