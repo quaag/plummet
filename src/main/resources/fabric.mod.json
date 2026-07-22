@@ -11,6 +11,7 @@
   },
   "license": "MIT",
   "environment": "*",
+  "accessWidener": "plummet.accesswidener",
   "entrypoints": {
     "main": ["dev.quaag.plummet.Plummet"]
   },

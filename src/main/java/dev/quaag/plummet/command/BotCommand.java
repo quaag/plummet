@@ -3,6 +3,7 @@ package dev.quaag.plummet.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dev.quaag.plummet.bot.BotMode;
 import dev.quaag.plummet.bot.PracticeBot;
 import dev.quaag.plummet.scenario.Arena;
 import net.minecraft.entity.mob.ZombieEntity;
@@ -37,7 +38,12 @@ public final class BotCommand {
                                 ctx.getSource(),
                                 IntegerArgumentType.getInteger(ctx, "health")))))
                     .then(literal("remove")
-                        .executes(ctx -> removeBot(ctx.getSource()))))
+                        .executes(ctx -> removeBot(ctx.getSource())))
+                    .then(literal("mode")
+                        .then(literal("static")
+                            .executes(ctx -> setMode(ctx.getSource(), BotMode.STATIC)))
+                        .then(literal("strafe")
+                            .executes(ctx -> setMode(ctx.getSource(), BotMode.STRAFE)))))
                 .then(literal("arena")
                     .executes(ctx -> buildArena(ctx.getSource())))
                 .then(DrillCommand.build())
@@ -73,6 +79,19 @@ public final class BotCommand {
         float spawned = bot.getMaxHealth();
         source.sendFeedback(
             () -> Text.literal("[Plummet] Spawned a practice dummy with " + (int) spawned + " health."),
+            false);
+        return 1;
+    }
+
+    private static int setMode(ServerCommandSource source, BotMode mode) {
+        if (PracticeBot.get() == null) {
+            source.sendError(Text.literal("[Plummet] No practice dummy to set a mode on."));
+            return 0;
+        }
+
+        PracticeBot.setMode(mode);
+        source.sendFeedback(
+            () -> Text.literal("[Plummet] Dummy mode set to " + mode.id() + "."),
             false);
         return 1;
     }
