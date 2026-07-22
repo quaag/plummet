@@ -14,8 +14,6 @@ The mod is a MACE training tool. Prefer work that makes it measurably better at 
 
 ## Tasks
 
-- [ ] Persist session stats across a restart by writing them into the world save directory on server stop and loading them on server start.
-      commit: persist session stats
 - [ ] Add a test source set with plain JUnit tests for the pure logic that does not need a running game: health clamping, stats accumulation and reset, and drill state transitions. Wire the test task into the build.
       commit: add unit tests
 - [ ] Bump mod_version to 0.2.0 in gradle.properties and update the README status and command table to match everything shipped.
@@ -23,6 +21,8 @@ The mod is a MACE training tool. Prefer work that makes it measurably better at 
 
 ## Done
 
+- [x] Persist session stats across a restart by writing them into the world save directory on server stop and loading them on server start.
+      commit: persist session stats
 - [x] Drill difficulty: /plummet drill height with easy, normal, and hard options that set a target height threshold and report pass or fail against it on each landing.
       commit: drill difficulty
 - [x] Combo drill: /plummet drill combo tracks a full wind charge launch into mace hit sequence and reports height gained, airtime in ticks, and damage dealt on the landing hit.
